@@ -1,4 +1,4 @@
-package br.com.crudsimples.contralador;
+package br.com.crudsimples.controlador;
 
 import br.com.crudsimples.modelo.Produto;
 import br.com.crudsimples.modelo.ProdutoDao;
