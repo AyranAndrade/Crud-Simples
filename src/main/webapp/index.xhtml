@@ -1,0 +1,226 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+        xmlns:p="http://primefaces.org/ui"
+        xmlns:pm="http://primefaces.org/mobile"
+        xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://xmlns.jcp.org/jsf/html">
+    <f:view renderKitId="PRIMEFACES_MOBILE" />
+<h:head>
+    <title>
+        Bem-vindo ao CRUD simples!
+    </title>
+</h:head>
+<h:body>
+    <pm:page id="cliente">
+        <pm:header title="Cliente">
+            <ui:include src="WEB-INF/paginas/cabecalho.xhtml"/>
+        </pm:header>
+        <pm:content>
+            
+            <p:accordionPanel widgetVar="ccrCliente" id="ccrClienteId">
+                
+                <p:tab title="Novo cliente">
+                    
+                    <h:form id="frmNovoCliente">
+                        
+                        <p:growl id="grwCliente" showDetail="true"/>
+                        
+                        <pm:field>
+                            <p:outputLabel value="Nome:"/>
+                            <p:inputText maxlength="60" value="#{clienteBean.nome}"/>
+                        </pm:field>
+                        
+                        <pm:field>
+                            <p:outputLabel value="CPF:"/>
+                            <!-- p:inputMask não funciona em versão mobile -->
+                            <p:inputText value="#{clienteBean.cpf}" maxlength="14"/>
+                        </pm:field>
+                        
+                        <p:commandButton value="Salvar" update="grwCliente @form cliente:ccrClienteId:dtlCliente"
+                                         action="#{clienteBean.novo()}"/>
+                        
+                    </h:form>
+                    
+                </p:tab>
+                
+                <p:tab title="Editar cliente">
+                    
+                    <h:form id="frmEditaCliente">
+                        
+                        <p:growl id="grwEditaCliente" showDetail="true"/>
+                        
+                        <pm:field>
+                            <p:outputLabel value="Nome:"/>
+                            <p:inputText maxlength="60" value="#{clienteBean.cliente.nome}"/>
+                        </pm:field>
+                        
+                        <pm:field>
+                            <p:outputLabel value="CPF:"/>
+                            <!-- p:inputMask não funciona em versão mobile -->
+                            <p:inputText value="#{clienteBean.cliente.cpf}"/>
+                        </pm:field>
+                        
+                        <p:commandButton value="Editar" update="grwEditaCliente @form cliente:ccrClienteId:dtlCliente"
+                                         action="#{clienteBean.edita()}"/>
+                        
+                    </h:form>
+                    
+                </p:tab>                
+                
+                <p:tab title="Listar clientes">
+                    <h:form>
+                        <pm:field>
+                            <p:inputText placeholder="Pesquise clientes por nome."
+                                         value="#{clienteBean.nome}" maxlength="60"/>
+                            <p:commandButton value="Procurar" 
+                                             update="cliente:ccrClienteId:dtlCliente"
+                                             action="#{clienteBean.procura()}"/>
+                        </pm:field>
+                    </h:form>
+                    
+                    <p:dataList value="#{clienteBean.lista()}" var="cliente" 
+                                paginator="true" rows="5" id="dtlCliente">
+                        <f:facet name="header">
+                            Lista de clientes
+                        </f:facet>
+                        
+                        <p:panelGrid columns="1">
+                            <p:outputLabel value="Nome: #{cliente.nome}"/>
+                            <p:outputLabel value="CPF: #{cliente.cpf}"/>
+                        </p:panelGrid>
+                        
+                        <p:panelGrid columns="1" class="ui-li-aside">
+                            <p:commandLink action="#{clienteBean.clienteParaEditarOuExcluir(cliente)}"
+                                           oncomplete="PF('ccrCliente').select(1)"
+                                           update="cliente:ccrClienteId:frmEditaCliente"
+                                           value="Editar"/>
+                            <p:commandLink action="#{clienteBean.clienteParaEditarOuExcluir(cliente)}"
+                                           oncomplete="PF('dlgCliente').show()"
+                                           value="Excluir"/>
+                        </p:panelGrid>
+                    </p:dataList>
+                    
+                    <p:dialog header="Excluir cliente" widgetVar="dlgCliente"
+                              showEffect="pop">
+                        <p:outputLabel value="Tem certeza que você deseja excluir este cliente?"/>
+                        <p:panelGrid columns="2" styleClass="ui-responsive">
+                            <p:commandButton value="Sim" action="#{clienteBean.exclui()}"
+                                             update="cliente:ccrClienteId:dtlCliente"
+                                             oncomplete="PF('dlgCliente').hide()"/>
+                            <p:commandButton value="Não" 
+                                             onclick="PF('dlgCliente').hide()"/>
+                        </p:panelGrid>
+                    </p:dialog>
+                    
+                </p:tab>
+                
+            </p:accordionPanel>
+            
+        </pm:content>
+    </pm:page>
+    
+    <pm:page id="produto">
+        <pm:header title="Produto">
+            <ui:include src="WEB-INF/paginas/cabecalho.xhtml"/>
+        </pm:header>
+        <pm:content>
+            <p:accordionPanel widgetVar="ccrProduto" id="ccrProdutoId">
+                <p:tab title="Novo produto">
+                    <h:form id="frmNovoProduto">
+                        
+                        <p:growl id="grwProduto" showDetail="true"/>
+                        
+                        <pm:field>
+                            <p:outputLabel value="Nome do produto:"/>
+                            <p:inputText maxlength="30" value="#{produtoBean.nome}"/>
+                        </pm:field>
+                        
+                        <pm:field>
+                            <p:outputLabel value="Descrição do produto:"/>
+                            <p:inputTextarea value="#{produtoBean.descricao}"
+                                             maxlength="200"/>
+                        </pm:field>
+                        
+                        <p:commandButton value="Salvar" update="grwProduto @form produto:ccrProdutoId:dtlProduto"
+                                         action="#{produtoBean.novo()}"/>
+                        
+                    </h:form>                    
+                </p:tab>
+                
+                <p:tab title="Editar produto">
+                    <h:form id="frmEditaProduto">
+                        
+                        <p:growl id="grwEditaProduto" showDetail="true"/>
+                        
+                        <pm:field>
+                            <p:outputLabel value="Nome do produto:"/>
+                            <p:inputText maxlength="30" value="#{produtoBean.produto.nome}"/>
+                        </pm:field>
+                        
+                        <pm:field>
+                            <p:outputLabel value="Descrição do produto:"/>
+                            <p:inputTextarea value="#{produtoBean.produto.descricao}"
+                                             maxlength="200"/>
+                        </pm:field>
+                        
+                        <p:commandButton value="Editar" update="grwEditaProduto @form produto:ccrProdutoId:dtlProduto"
+                                         action="#{produtoBean.edita()}"/>
+                        
+                    </h:form>                    
+                </p:tab>                
+                
+                <p:tab title="Listar produtos">
+                    
+                    <h:form>
+                        <pm:field>
+                            <p:inputText placeholder="Pesquise produtos pelo nome"
+                                         value="#{produtoBean.nome}" maxlength="30"/>
+                            <p:commandButton value="Procurar" 
+                                             update="produto:ccrProdutoId:dtlProduto"
+                                             action="#{produtoBean.procura()}"/>
+                        </pm:field>
+                    </h:form>
+                    
+                    <p:dataList value="#{produtoBean.lista()}" var="produto" 
+                                paginator="true" rows="5" id="dtlProduto">
+                        <f:facet name="header">
+                            Lista de produtos
+                        </f:facet>
+                        
+                        <p:panelGrid columns="1">
+                            <p:outputLabel value="Nome: #{produto.nome}"/>
+                            <p:outputLabel value="Descrição: #{produto.descricao}"
+                                           rendered="#{not empty produto.descricao}"/>
+                            <p:outputLabel value="Sem descrição." 
+                                           rendered="#{empty produto.descricao}"/>
+                        </p:panelGrid>
+                        
+                        <p:panelGrid columns="1" class="ui-li-aside">
+                            <p:commandLink action="#{produtoBean.produtoParaEditarOuExcluir(produto)}"
+                                           oncomplete="PF('ccrProduto').select(1)"
+                                           update="produto:ccrProdutoId:frmEditaProduto"
+                                           value="Editar"/>
+                            <p:commandLink action="#{produtoBean.produtoParaEditarOuExcluir(produto)}"
+                                           oncomplete="PF('dlgProduto').show()"
+                                           value="Excluir"/>
+                        </p:panelGrid>
+                    </p:dataList>
+                    
+                    <p:dialog header="Excluir produto" widgetVar="dlgProduto"
+                              showEffect="pop">
+                        <p:outputLabel value="Tem certeza que você deseja excluir este produto?"/>
+                        <p:panelGrid columns="2" styleClass="ui-responsive">
+                            <p:commandButton value="Sim" action="#{produtoBean.exclui()}"
+                                             update="produto:ccrProdutoId:dtlProduto"
+                                             oncomplete="PF('dlgProduto').hide()"/>
+                            <p:commandButton value="Não" 
+                                             onclick="PF('dlgProduto').hide()"/>
+                        </p:panelGrid>
+                    </p:dialog>
+                </p:tab>
+            </p:accordionPanel>
+        </pm:content>
+    </pm:page>    
+</h:body>
+</html>
